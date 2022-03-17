@@ -3,7 +3,9 @@ package com.promineotech.jeep;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+import com.promineotech.ComponentScanMarker;
+
+@SpringBootApplication(scanBasePackageClasses = {ComponentScanMarker.class})
 
 public class JeepSales {
 
@@ -12,4 +14,4 @@ public class JeepSales {
 
 	}
 
-}
+}//this class just starts spring boot and calls on the jeep sales class
