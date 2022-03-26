@@ -3,6 +3,7 @@ package com.promineotech.jeep.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -57,8 +58,42 @@ class FetchJeepTest extends FetchJeepTestSupport {
 		assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
 		
 		// And: the actual list returned is the same as the expected list
+		List<Jeep> actual = response.getBody();
 		List<Jeep> expected = buildExpected();
-		assertThat(response.getBody()).isEqualTo(expected);
+		
+		actual.forEach(jeep -> jeep.setModelPK(null));
+		
+		assertThat(actual).isEqualTo(expected);
 	}
+	@Disabled
+	@Test
+	void testThatAnErrorMessageIsReturnedWhenAnInvalidTrimisSupplied() {
+		//Given: a valid model, trim and URI
+		JeepModel model = JeepModel.WRANGLER;
+		String trim = "Invalid value";
+		String uri = String.format("%s?model=%s&trim=%s", getBaseUri(), model, trim);
+		
+		//When: a connection is made to  the URI
+		
+		ResponseEntity<Map<String, Object>> response = 
+				getRestTemplate().exchange(uri,HttpMethod.GET, null, 
+						new ParameterizedTypeReference<>() {});
+		
+		//Then: a not found 404 status code is returned
+		assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.NOT_FOUND);
+		
+		// And: an error message is returned
+		Map<String, Object> error = response.getBody();
+		
+		// @formatter: off
+		assertThat(error)
+		.containsKey("message")
+		.containsEntry("status code", HttpStatus.NOT_FOUND.value())
+		.containsEntry("uri", "/jeeps")
+		.containsKey("timestamp")
+		.containsEntry("reason", HttpStatus.NOT_FOUND.getReasonPhrase());
+		// @formatter: on
+	}
+		
 
 }
