@@ -27,13 +27,13 @@ public class DefaultJeepSalesDao implements JeepSalesDao {
 
 	@Override
 	public List<Jeep> fetchJeeps(JeepModel model, String trim) {
-		log.debug("DAO: model ={}, trim={}", model, trim);
+		log.debug("DAO: model = {}, trim = {}", model, trim);
 		
 		
 		// @formatter:off
 		String sql = ""
 			+ "select * "
-			+ "from models"
+			+ "from models "
 			+ "where model_id = :model_id and trim_level = :trim_level";
 		// @formatter:on
 		
